@@ -14,70 +14,72 @@ public class Hex : MonoBehaviour {
     public bool wasRecentlyUsed;
 
     float TimePlanned;
-    float TimePassed;
+
+    public GameObject ExplosionPrefab;
 
     public void Uprise() {
         if (!isUprised && !wasRecentlyUsed) {
-            StartCoroutine(SmoothMove(1));
+            StartCoroutine(ChangeHexState(1));
             isUprised = true;
             wasRecentlyUsed = true;
             
-            TimePlanned = 3 / GameManager.instance.Difficulty;
-            TimePassed = 0;
+            TimePlanned = 2 / Gameplay.Difficulty;
+            StartCoroutine (HexLife());
         }
     }
 
-    void Update () {
-        if (isUprised) {
+    IEnumerator HexLife () {
+        float TimePassed = 0;
+        while (isUprised) {
             TimePassed += Time.deltaTime;
             Indicator.fillAmount = TimePassed / TimePlanned;
             Indicator.color = GradientIndicator.Evaluate(TimePassed / TimePlanned);
 
             if (TimePassed >= TimePlanned) {
-                //EXPLODE
                 Explode();
             }
+            yield return null;
         }
     }
 
     public void Explode () {
-        GameManager.instance.Miss(true);
-        gameObject.SetActive(false);
+        StartCoroutine(ChangeHexState(0.1f));
+        Instantiate(ExplosionPrefab, transform.localPosition + (Vector3.up / 2), Quaternion.identity);
+        Gameplay.instance.Miss(true);
     }
 
     public void Hide () {
-        if (isUprised) {
-            StartCoroutine(SmoothMove(0.1f));
+        StartCoroutine(ChangeHexState(0.1f));
+    }
+
+    public void CoolDown () {
+        StartCoroutine(ChangeHexState(0.1f));
+        Gameplay.instance.Success();
+    }
+
+    IEnumerator ChangeHexState (float newHeight) {
+        if (newHeight != 1)
             isUprised = false;
-            Indicator.color = DefaultLineColor;
-            Indicator.fillAmount = 1;
 
-            //ADD SOME SCORE POINTS AND SPEED UP THE GAME
-            GameManager.instance.Success();
-            StartCoroutine (Hiding());
-        } else {
-            //REMOVE MISSES
-            GameManager.instance.Miss(false);
+        float originalHeight = transform.localScale.y;
+        float originalIndFill = Indicator.fillAmount;
+        Color originalColor = Indicator.color;
+        float TimePassed = 0;
+
+        while (TimePassed < Gameplay.TransitionTime) {
+            TimePassed += Time.deltaTime;
+            transform.localScale = new Vector3 (1, Mathf.Lerp(originalHeight, newHeight, TimePassed / Gameplay.TransitionTime), 1);
+            if (newHeight != 1) {
+                Indicator.fillAmount = Mathf.Lerp(originalIndFill, 1, TimePassed / Gameplay.TransitionTime);
+                Indicator.color = Color.Lerp(originalColor, DefaultLineColor, TimePassed / Gameplay.TransitionTime);
+            }
+
+            yield return null;
         }
-    }
 
-    IEnumerator Hiding () {
-        yield return new WaitForSecondsRealtime (2/GameManager.instance.Difficulty);
-        wasRecentlyUsed = false;
-    }
-
-    IEnumerator SmoothMove (float newHeight) {
-        // float currentMovementTime = 0;
-        // float originalHeight = transform.localScale.y;
-        // float Height = 1;
-        // float animTime = 0.1f / GameManager.instance.Difficulty;
-        // while (transform.localScale.y != newHeight) {
-        //     currentMovementTime += Time.deltaTime;
-        //     Height = Mathf.Lerp(originalHeight, newHeight, currentMovementTime / animTime);
-        //     transform.localScale = new Vector3 (1, Height, 1);
-        //     yield return null;
-        // }
-        transform.localScale = new Vector3 (1, newHeight, 1);
-        yield return null;
+        if (newHeight != 1) {
+            yield return new WaitForSecondsRealtime (2/Gameplay.Difficulty);
+            wasRecentlyUsed = false;
+        }
     }
 }
