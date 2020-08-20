@@ -23,7 +23,7 @@ public class Hex : MonoBehaviour {
             isUprised = true;
             wasRecentlyUsed = true;
             
-            TimePlanned = 2 / Gameplay.Difficulty;
+            TimePlanned = Gameplay.instance.HexGenTime * Gameplay.instance.HexLiveMult / Gameplay.Difficulty;
             StartCoroutine (HexLife());
         }
     }

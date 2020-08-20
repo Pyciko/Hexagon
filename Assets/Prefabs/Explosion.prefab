@@ -2610,7 +2610,7 @@ ParticleSystem:
     inWorldSpace: 0
     multiplyDragByParticleSize: 1
     multiplyDragByParticleVelocity: 1
-    dampen: 0.05
+    dampen: 0.2
     drag:
       serializedVersion: 2
       minMaxState: 0

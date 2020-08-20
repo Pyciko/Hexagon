@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Gameplay : MonoBehaviour {
 
@@ -9,6 +10,11 @@ public class Gameplay : MonoBehaviour {
     public static float Difficulty = 1;
     public static int Score;
     public static int Misses;
+
+    public int HexGenTime = 2;
+    public float AdditionalDifficulty = 0.02f;
+    public float HexLiveMult = 2;
+    public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset PipelineAsset;
 
     public Hex[] Hexes;
     List<int> possibleIndexes = new List<int>();
@@ -23,6 +29,25 @@ public class Gameplay : MonoBehaviour {
 
     void Start () {
         BeginPlay();
+    }
+
+    public void UpdateHexGenTime (int Value) {
+        HexGenTime = Value;
+        ClearField();
+    }
+
+    public void UpdateAdditionalDifficulty (float Value) {
+        AdditionalDifficulty = Value;
+        ClearField();
+    }
+
+    public void UpdateHexLiveMult (float Value) {
+        HexLiveMult = Value;
+        ClearField();
+    }
+
+    public void ChangeRenderScale (float Value) {
+        PipelineAsset.renderScale = Value;
     }
 
     public void BeginPlay () {
@@ -51,7 +76,7 @@ public class Gameplay : MonoBehaviour {
     }
 
     public void Success () {
-        Difficulty += 0.02f;
+        Difficulty += AdditionalDifficulty;
         Score += 5;
         TransitionTime = 0.3f / Difficulty;
         UIManager.instance.UpdateScore();
@@ -59,9 +84,11 @@ public class Gameplay : MonoBehaviour {
 
     public void Miss (bool Explosion) {
         Misses--;
-        UIManager.instance.UpdateMisses();
-        if (Misses < 0) 
+        if (Misses < 0) {
             EndPlay();
+        } else {
+            UIManager.instance.UpdateMisses();
+        }   
     }
 
     IEnumerator HexesLoop () {
@@ -76,7 +103,7 @@ public class Gameplay : MonoBehaviour {
                 possibleIndexes.Clear();
             }
         
-            yield return new WaitForSecondsRealtime (1 / Difficulty);
+            yield return new WaitForSecondsRealtime (HexGenTime / Difficulty);
         }
     }
 }

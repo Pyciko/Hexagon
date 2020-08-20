@@ -65,8 +65,8 @@ public class UIManager : MonoBehaviour {
 
     IEnumerator MissesBlink () {
         NextMisses = Gameplay.Misses;
-        Vector3 oldPos = new Vector3 (-45 * LastMisses, -424, 0);
-        Vector3 newPos = new Vector3 (-45 * NextMisses, -424, 0);
+        Vector3 oldPos = new Vector3 (-38.6f * LastMisses, -298, 0);
+        Vector3 newPos = new Vector3 (-38.6f * NextMisses, -298, 0);
         MissesRect.anchoredPosition = oldPos;
         ShownTime = 0;
         for (int i=0; i<3; i++) {
