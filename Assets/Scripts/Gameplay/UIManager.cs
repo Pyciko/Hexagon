@@ -68,11 +68,12 @@ public class UIManager : MonoBehaviour {
         Vector3 oldPos = new Vector3 (-38.6f * LastMisses, -298, 0);
         Vector3 newPos = new Vector3 (-38.6f * NextMisses, -298, 0);
         MissesRect.anchoredPosition = oldPos;
+        int missesDelta = LastMisses - NextMisses;
         ShownTime = 0;
         for (int i=0; i<3; i++) {
             MissesText.text = new string('⬡', LastMisses);
             yield return new WaitForSecondsRealtime (0.1f/Gameplay.Difficulty);
-            if (LastMisses > NextMisses) MissesText.text = new string('⬡', LastMisses - 1) + '⬢';
+            if (LastMisses > NextMisses) MissesText.text = new string('⬡', LastMisses - missesDelta) + new string('⬢', missesDelta);
             yield return new WaitForSecondsRealtime (0.1f/Gameplay.Difficulty);
         }
         LastMisses = Gameplay.Misses;

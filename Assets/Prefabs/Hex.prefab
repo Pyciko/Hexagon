@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cac67b7a750e7d499cecf05eb720bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Indicator: {fileID: 0}
+  Indicator: {fileID: 892770110}
   GradientIndicator:
     serializedVersion: 2
     key0: {r: 1, g: 0.8, b: 0, a: 1}

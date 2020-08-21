@@ -45,7 +45,7 @@ public class Hex : MonoBehaviour {
     public void Explode () {
         StartCoroutine(ChangeHexState(0.1f));
         Instantiate(ExplosionPrefab, transform.localPosition + (Vector3.up / 2), Quaternion.identity);
-        Gameplay.instance.Miss(true);
+        Gameplay.instance.Miss(true, false);
     }
 
     public void Hide () {
@@ -54,7 +54,7 @@ public class Hex : MonoBehaviour {
 
     public void CoolDown () {
         StartCoroutine(ChangeHexState(0.1f));
-        Gameplay.instance.Success();
+        Gameplay.instance.Success(false);
     }
 
     IEnumerator ChangeHexState (float newHeight) {
