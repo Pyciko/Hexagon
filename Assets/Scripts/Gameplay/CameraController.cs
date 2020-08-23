@@ -44,6 +44,12 @@ public class CameraController : MonoBehaviour {
                 }
             }
         }
+        if (Input.GetKeyDown(KeyCode.E)) {
+            MoveAway();
+        }
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            MoveCloser();
+        }
     }
 
     public void MoveAway () {

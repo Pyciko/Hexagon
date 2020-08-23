@@ -33,21 +33,6 @@ public class Gameplay : MonoBehaviour {
         BeginPlay();
     }
 
-    public void UpdateHexGenTime (int Value) {
-        HexGenTime = Value;
-        ClearField();
-    }
-
-    public void UpdateAdditionalDifficulty (float Value) {
-        AdditionalDifficulty = Value;
-        ClearField();
-    }
-
-    public void UpdateHexLiveMult (float Value) {
-        HexLiveMult = Value;
-        ClearField();
-    }
-
     public void BeginPlay () {
         if(Screen.dpi > 0) {
             PipelineAsset.renderScale = Mathf.Clamp(0.5f * 403 / Screen.dpi, 0.25f, 1);
@@ -58,8 +43,8 @@ public class Gameplay : MonoBehaviour {
         Difficulty = 1;
         Score = 0;
         Misses = 5;
-        UIManager.instance.LastMisses = Misses;
-        UIManager.instance.UpdateScore();
+        PlayUI.instance.LastMisses = Misses;
+        PlayUI.instance.UpdateScore();
         ContinuePlay();
     }
 
@@ -92,7 +77,7 @@ public class Gameplay : MonoBehaviour {
         }
     
         TransitionTime = 0.3f / Difficulty;
-        UIManager.instance.UpdateScore();
+        PlayUI.instance.UpdateScore();
     }
 
     public void Miss (bool Explosion, bool Crystal) {
@@ -106,14 +91,13 @@ public class Gameplay : MonoBehaviour {
         if (Misses < 0) {
             EndPlay();
         } else {
-            UIManager.instance.UpdateMisses();
+            PlayUI.instance.UpdateMisses();
         }  
     }
 
     IEnumerator CrystalWait () {
-        int waitTime = Random.Range(HexGenTime * 60, HexGenTime * 90);
-        //yield return new WaitForSecondsRealtime (waitTime / Difficulty);
-        yield return new WaitForSecondsRealtime (5 / Difficulty);
+        int waitTime = Random.Range(HexGenTime * 10, HexGenTime * 20);
+        yield return new WaitForSecondsRealtime (waitTime / Difficulty);
 
         ClearField();
         CameraController.CrystalMode = true;

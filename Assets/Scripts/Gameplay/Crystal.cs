@@ -9,8 +9,10 @@ public class Crystal : MonoBehaviour {
     public static Crystal instance;
 
     public Image TimeImage;
+    public GameObject TimeLine;
     public TextMeshProUGUI Header;
     public GameObject ScoreText;
+    public Gradient ColorGradient;
     
     public Material CrystalMat;
     
@@ -26,10 +28,11 @@ public class Crystal : MonoBehaviour {
         CrystalMat.SetFloat("Vector1_11351534", 0);
         CrystalMat.SetFloat("Vector1_CF4763B6", 0);
         HealthLeft = 100;
-        TimePlanned = Gameplay.instance.HexGenTime * 15 / Gameplay.Difficulty;
+        TimePlanned = Gameplay.instance.HexGenTime * 25 / Gameplay.Difficulty;
         TimeLeft = TimePlanned;
         StartCoroutine(CrystalLife());
         Header.text = "TIME LEFT";
+        TimeLine.SetActive(true);
         TimeImage.fillAmount = 0;
         ScoreText.SetActive(false);
     }
@@ -50,8 +53,9 @@ public class Crystal : MonoBehaviour {
         while (TimeLeft > 0 && HealthLeft > 0) {
             TimeLeft -= Time.deltaTime;
             CrystalMat.SetFloat("Vector1_11351534", (100 - HealthLeft)/100 * 8);
-            CrystalMat.SetFloat("Vector1_CF4763B6", 1 - TimeLeft/TimePlanned);
+            CrystalMat.SetFloat("Vector1_CF4763B6", 1 - TimeLeft / TimePlanned);
             TimeImage.fillAmount = TimeLeft / TimePlanned;
+            TimeImage.color = ColorGradient.Evaluate(1 - TimeLeft / TimePlanned);
             yield return null;
         }
 
@@ -73,6 +77,9 @@ public class Crystal : MonoBehaviour {
         }
 
         ScoreText.SetActive(true);
+        TimeLine.SetActive(false);
         Gameplay.instance.ContinuePlay();
+        yield return new WaitForSecondsRealtime (Gameplay.TransitionTime);
+        PlayUI.instance.ScoreSize();
     }
 }

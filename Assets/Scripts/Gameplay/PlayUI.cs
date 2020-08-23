@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class UIManager : MonoBehaviour {
+public class PlayUI : MonoBehaviour {
 
-    public static UIManager instance;
+    public static PlayUI instance;
 
     public TextMeshProUGUI Header;
     public TextMeshProUGUI ScoreText;
     public TextMeshProUGUI MissesText;
     public RectTransform MissesRect;
+    public RectTransform ScoreRect;
+
+    public AnimationCurve ScoreSizeCurve;
 
     public int LastMisses;
     int NextMisses;
@@ -24,6 +27,19 @@ public class UIManager : MonoBehaviour {
 
     public void UpdateScore() {
         StartCoroutine(SmoothScoreChange());
+    }
+
+    public void ScoreSize () {
+        StartCoroutine(ScoreSizeChange());
+    }
+
+    IEnumerator ScoreSizeChange () {
+        float TimePassed = 0;
+        while (TimePassed < Gameplay.TransitionTime * 2) {
+            TimePassed += Time.deltaTime;
+            ScoreRect.localScale = Vector3.one * ScoreSizeCurve.Evaluate(TimePassed/(Gameplay.TransitionTime*2));
+            yield return null;
+        }
     }
 
     IEnumerator SmoothScoreChange () {
@@ -65,8 +81,8 @@ public class UIManager : MonoBehaviour {
 
     IEnumerator MissesBlink () {
         NextMisses = Gameplay.Misses;
-        Vector3 oldPos = new Vector3 (-38.6f * LastMisses, -298, 0);
-        Vector3 newPos = new Vector3 (-38.6f * NextMisses, -298, 0);
+        Vector3 oldPos = new Vector3 (-38.6f * LastMisses, -292, 0);
+        Vector3 newPos = new Vector3 (-38.6f * NextMisses, -292, 0);
         MissesRect.anchoredPosition = oldPos;
         int missesDelta = LastMisses - NextMisses;
         ShownTime = 0;
