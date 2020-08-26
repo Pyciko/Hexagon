@@ -52,7 +52,7 @@ public class Crystal : MonoBehaviour {
 
         while (TimeLeft > 0 && HealthLeft > 0) {
             TimeLeft -= Time.deltaTime;
-            CrystalMat.SetFloat("Vector1_11351534", (100 - HealthLeft)/100 * 8);
+            CrystalMat.SetFloat("Vector1_11351534", (100 - HealthLeft)/100);
             CrystalMat.SetFloat("Vector1_CF4763B6", 1 - TimeLeft / TimePlanned);
             TimeImage.fillAmount = TimeLeft / TimePlanned;
             TimeImage.color = ColorGradient.Evaluate(1 - TimeLeft / TimePlanned);
