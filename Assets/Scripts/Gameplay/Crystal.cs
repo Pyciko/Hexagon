@@ -28,7 +28,7 @@ public class Crystal : MonoBehaviour {
         CrystalMat.SetFloat("Vector1_11351534", 0);
         CrystalMat.SetFloat("Vector1_CF4763B6", 0);
         HealthLeft = 100;
-        TimePlanned = Gameplay.instance.HexGenTime * 25 / Gameplay.Difficulty;
+        TimePlanned = Gameplay.instance.BaseTime * 25 / Gameplay.Difficulty;
         TimeLeft = TimePlanned;
         StartCoroutine(CrystalLife());
         Header.text = "TIME LEFT";

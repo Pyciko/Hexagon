@@ -12,7 +12,7 @@ public class Gameplay : MonoBehaviour {
     public static int Score;
     public static int Misses;
 
-    public int HexGenTime = 2;
+    public int BaseTime = 1;
     public float AdditionalDifficulty = 0.02f;
     public float HexLiveMult = 2;
     public int DefaultReward = 5;
@@ -96,7 +96,7 @@ public class Gameplay : MonoBehaviour {
     }
 
     IEnumerator CrystalWait () {
-        int waitTime = Random.Range(HexGenTime * 10, HexGenTime * 20);
+        int waitTime = Random.Range(BaseTime * 10, BaseTime * 20);
         yield return new WaitForSecondsRealtime (waitTime / Difficulty);
 
         ClearField();
@@ -116,7 +116,7 @@ public class Gameplay : MonoBehaviour {
                 possibleIndexes.Clear();
             }
         
-            yield return new WaitForSecondsRealtime (HexGenTime / Difficulty);
+            yield return new WaitForSecondsRealtime (BaseTime / Difficulty);
         }
     }
 }
