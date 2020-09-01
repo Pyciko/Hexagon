@@ -5,8 +5,7 @@ using UnityEngine;
 public class HexExplosion : MonoBehaviour {
 
     IEnumerator Start () {
-        float Lifetime = 0.4f;
-        Lifetime /= Gameplay.Difficulty;
+        float Lifetime = Gameplay.instance.BaseTime / 3;
         GetComponent<ParticleSystem>().startLifetime = Lifetime;
 
         yield return new WaitForSecondsRealtime (Lifetime + 0.1f);

@@ -23,7 +23,7 @@ public class Hex : MonoBehaviour {
             isUprised = true;
             wasRecentlyUsed = true;
             
-            TimePlanned = Gameplay.instance.BaseTime * Gameplay.instance.HexLiveMult / Gameplay.Difficulty;
+            TimePlanned = Gameplay.instance.BaseTime * Gameplay.instance.HexLiveMult;
             StartCoroutine (HexLife());
         }
     }
@@ -78,7 +78,7 @@ public class Hex : MonoBehaviour {
         }
 
         if (newHeight != 1) {
-            yield return new WaitForSecondsRealtime (2/Gameplay.Difficulty);
+            yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime);
             wasRecentlyUsed = false;
         }
     }

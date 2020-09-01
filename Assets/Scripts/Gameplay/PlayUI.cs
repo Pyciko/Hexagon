@@ -88,9 +88,9 @@ public class PlayUI : MonoBehaviour {
         ShownTime = 0;
         for (int i=0; i<3; i++) {
             MissesText.text = new string('⬡', LastMisses);
-            yield return new WaitForSecondsRealtime (0.1f/Gameplay.Difficulty);
+            yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime/10);
             if (LastMisses > NextMisses) MissesText.text = new string('⬡', LastMisses - missesDelta) + new string('⬢', missesDelta);
-            yield return new WaitForSecondsRealtime (0.1f/Gameplay.Difficulty);
+            yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime/10);
         }
         LastMisses = Gameplay.Misses;
         MissesText.text = new string('⬡', NextMisses);
@@ -105,10 +105,10 @@ public class PlayUI : MonoBehaviour {
 
     IEnumerator SmoothMissesChange () {
         yield return MissesFade();
-        yield return new WaitForSecondsRealtime (0.5f/Gameplay.Difficulty);
+        yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime / 2);
         yield return MissesBlink();
-
-        while (ShownTime < 1 / Gameplay.Difficulty) {
+        
+        while (ShownTime < Gameplay.instance.BaseTime) {
             ShownTime += Time.deltaTime;
             yield return null;
         }

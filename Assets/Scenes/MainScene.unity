@@ -971,8 +971,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PipelineAsset: {fileID: 11400000, guid: d847b876476d3d6468f5dfcd34266f96, type: 2}
-  HexGenTime: 1
-  AdditionalDifficulty: 0.01
+  BaseTime: 1
+  AdditionalDifficulty: 1.005
   HexLiveMult: 2
   DefaultReward: 5
   Hexes:

@@ -1,19 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Gameplay : MonoBehaviour {
 
     public static Gameplay instance;
     public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset PipelineAsset;
 
-    public static float Difficulty = 1;
     public static int Score;
     public static int Misses;
 
-    public int BaseTime = 1;
-    public float AdditionalDifficulty = 0.02f;
+    public float BaseTime = 1;
+    public float AdditionalDifficulty = 1.02f;
     public float HexLiveMult = 2;
     public int DefaultReward = 5;
 
@@ -40,7 +38,7 @@ public class Gameplay : MonoBehaviour {
             PipelineAsset.renderScale = 0.5f;
         }
         
-        Difficulty = 1;
+        BaseTime = 1;
         Score = 0;
         Misses = 5;
         PlayUI.instance.LastMisses = Misses;
@@ -69,21 +67,23 @@ public class Gameplay : MonoBehaviour {
 
     public void Success (bool Crystal) {
         if (Crystal) {
-            Difficulty += AdditionalDifficulty * 2;
+            //Difficulty += AdditionalDifficulty * 2;
+            BaseTime /= AdditionalDifficulty;
             Score += DefaultReward * 100;
         } else {
-            Difficulty += AdditionalDifficulty;
+            //Difficulty += AdditionalDifficulty;
+            BaseTime /= AdditionalDifficulty;
             Score += DefaultReward;
         }
     
-        TransitionTime = 0.3f / Difficulty;
+        TransitionTime = BaseTime / 3;
         PlayUI.instance.UpdateScore();
     }
 
     public void Miss (bool Explosion, bool Crystal) {
         if (Crystal) {
             Misses -= 2;
-            Difficulty += AdditionalDifficulty * 2;
+            BaseTime /= AdditionalDifficulty;
         } else {
             Misses--;
         }
@@ -96,8 +96,8 @@ public class Gameplay : MonoBehaviour {
     }
 
     IEnumerator CrystalWait () {
-        int waitTime = Random.Range(BaseTime * 10, BaseTime * 20);
-        yield return new WaitForSecondsRealtime (waitTime / Difficulty);
+        float waitTime = Random.Range(BaseTime * 30, BaseTime * 60);
+        yield return new WaitForSecondsRealtime (waitTime);
 
         ClearField();
         CameraController.CrystalMode = true;
@@ -116,7 +116,7 @@ public class Gameplay : MonoBehaviour {
                 possibleIndexes.Clear();
             }
         
-            yield return new WaitForSecondsRealtime (BaseTime / Difficulty);
+            yield return new WaitForSecondsRealtime (BaseTime);
         }
     }
 }
