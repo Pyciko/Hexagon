@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class HexExplosion : MonoBehaviour {
 
-    IEnumerator Start () {
-        float Lifetime = Gameplay.instance.BaseTime / 3;
-        GetComponent<ParticleSystem>().startLifetime = Lifetime;
+    IEnumerator Boom () {
+        float lifetime = Gameplay.instance.baseTime / 3;
+        GetComponent<ParticleSystem>().startLifetime = lifetime;
 
-        yield return new WaitForSecondsRealtime (Lifetime + 0.1f);
+        yield return new WaitForSecondsRealtime (lifetime + 0.1f);
         Destroy(gameObject);
     }
 }

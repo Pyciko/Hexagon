@@ -4,39 +4,36 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
-    Camera Cam;
-    public static bool CrystalMode;
+    private Camera cam;
+    public static bool crystalMode;
 
     public static CameraController instance;
 
-    public Vector3 ClosePos;
-    public Vector3 CloseRot;
-    public float CloseFov;
+    public Vector3 closePos;
+    public Vector3 closeRot;
+    public float closeFov;
 
-    public Vector3 FarPos;
-    public Vector3 FarRot;
-    public float FarFov;
+    public Vector3 farPos;
+    public Vector3 farRot;
+    public float farFov;
 
-    public AnimationCurve MovementCurve;
+    public AnimationCurve movementCurve;
 
     void Awake () {
         instance = this;
-    }
-
-    void Start () {
-        Cam = GetComponent<Camera>();
+        cam = GetComponent<Camera>();
     }
 
     void Update() {
         if (Input.GetMouseButtonDown(0)) {
             RaycastHit hit;
-            if (Physics.Raycast(Cam.ScreenPointToRay(Input.mousePosition), out hit)) {
-                if (CrystalMode) {
+            if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit)) {
+                if (crystalMode) {
                     if (hit.collider.GetComponent<Crystal>() != null) {
                         Crystal.instance.Damage();
                     }
                 } else {
-                    if (hit.collider.GetComponent<Hex>().isUprised) {
+                    if (hit.collider.GetComponent<Hex>().isRaised) {
                         hit.collider.GetComponent<Hex>().CoolDown();
                     } else {
                         Gameplay.instance.Miss(false, false);
@@ -54,21 +51,21 @@ public class CameraController : MonoBehaviour {
         StartCoroutine(CamTransition(false));
     }
 
-    IEnumerator CamTransition (bool Away) {
-        float TimePassed = 0;
-        float TimePlanned = Gameplay.TransitionTime * 3.333f;
+    private IEnumerator CamTransition (bool Away) {
+        float timePassed = 0;
+        float timePlanned = Gameplay.transitionTime * 3.333f;
         float evalValue = 0;
-        while (TimePassed < TimePlanned) {
-            TimePassed += Time.deltaTime;
-            evalValue = MovementCurve.Evaluate(TimePassed / TimePlanned);
+        while (timePassed < timePlanned) {
+            timePassed += Time.deltaTime;
+            evalValue = movementCurve.Evaluate(timePassed / timePlanned);
             if (Away) {
-                transform.position = Vector3.Lerp(ClosePos, FarPos, evalValue);
-                transform.rotation = Quaternion.Euler(Vector3.Lerp(CloseRot, FarRot, evalValue));
-                Cam.orthographicSize = Mathf.Lerp(CloseFov, FarFov, evalValue);
+                transform.position = Vector3.Lerp(closePos, farPos, evalValue);
+                transform.rotation = Quaternion.Euler(Vector3.Lerp(closeRot, farRot, evalValue));
+                cam.orthographicSize = Mathf.Lerp(closeFov, farFov, evalValue);
             } else {
-                transform.position = Vector3.Lerp(FarPos, ClosePos, evalValue);
-                transform.rotation = Quaternion.Euler(Vector3.Lerp(FarRot, CloseRot, evalValue));
-                Cam.orthographicSize = Mathf.Lerp(FarFov, CloseFov, evalValue);
+                transform.position = Vector3.Lerp(farPos, closePos, evalValue);
+                transform.rotation = Quaternion.Euler(Vector3.Lerp(farRot, closeRot, evalValue));
+                cam.orthographicSize = Mathf.Lerp(farFov, closeFov, evalValue);
             }
             yield return null;
         }

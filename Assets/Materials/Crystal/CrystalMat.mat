@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MainBossMat
+  m_Name: CrystalMat
   m_Shader: {fileID: -6465566751694194690, guid: 1a289000433d237498cede965865ca6a, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -60,10 +60,22 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_11351534: 0.53
+    - Vector1_11351534: 0.7
     - Vector1_BE5ADF5F: 0.5
-    - Vector1_CF4763B6: 1.0020016
+    - Vector1_CF4763B6: 1.0002731
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -86,7 +98,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_1FF495F1: {r: 0.0627451, g: 0.0627451, b: 0.0627451, a: 1}
+    - Color_1FF495F1: {r: 1, g: 0.79215693, b: 0, a: 1}
     - Color_2EA38F1: {r: 1, g: 0.8, b: 0, a: 1}
     - Color_7CCCDAB0: {r: 0.0625, g: 0.050000004, b: 0, a: 1}
     - Color_E84A8B48: {r: 0, g: 0.48167533, b: 3.9999995, a: 1}

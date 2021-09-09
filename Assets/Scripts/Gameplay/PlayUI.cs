@@ -7,19 +7,19 @@ public class PlayUI : MonoBehaviour {
 
     public static PlayUI instance;
 
-    public TextMeshProUGUI Header;
-    public TextMeshProUGUI ScoreText;
-    public TextMeshProUGUI MissesText;
-    public RectTransform MissesRect;
-    public RectTransform ScoreRect;
+    public TextMeshProUGUI header;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI missesText;
+    public RectTransform missesRect;
+    public RectTransform scoreRect;
 
     public AnimationCurve ScoreSizeCurve;
 
-    public int LastMisses;
-    int NextMisses;
+    public int previousMisses;
+    int nextMisses;
 
-    bool MissesShown = false;
-    float ShownTime = 0;
+    bool missesShown = false;
+    float shownTime = 0;
 
     void Awake () {
         instance = this;
@@ -35,94 +35,94 @@ public class PlayUI : MonoBehaviour {
 
     IEnumerator ScoreSizeChange () {
         float TimePassed = 0;
-        while (TimePassed < Gameplay.TransitionTime * 2) {
+        while (TimePassed < Gameplay.transitionTime * 2) {
             TimePassed += Time.deltaTime;
-            ScoreRect.localScale = Vector3.one * ScoreSizeCurve.Evaluate(TimePassed/(Gameplay.TransitionTime*2));
+            scoreRect.localScale = Vector3.one * ScoreSizeCurve.Evaluate(TimePassed/(Gameplay.transitionTime*2));
             yield return null;
         }
     }
 
     IEnumerator SmoothScoreChange () {
-        int NextScore = Gameplay.Score;
-        int LastScore = int.Parse(ScoreText.text);
+        int NextScore = Gameplay.score;
+        int LastScore = int.Parse(scoreText.text);
 
         float TimePassed = 0;
-        while (TimePassed < Gameplay.TransitionTime) {
+        while (TimePassed < Gameplay.transitionTime) {
             TimePassed += Time.deltaTime;
-            ScoreText.text = Mathf.RoundToInt(Mathf.Lerp(LastScore, NextScore, TimePassed / Gameplay.TransitionTime)).ToString();
+            scoreText.text = Mathf.RoundToInt(Mathf.Lerp(LastScore, NextScore, TimePassed / Gameplay.transitionTime)).ToString();
             yield return null;
         }
     }
 
     public void UpdateMisses() {
-        if (!MissesShown) {
+        if (!missesShown) {
             StartCoroutine(SmoothMissesChange());
         } else {
             StartCoroutine(MissesBlink());
         }
     }
 
-    IEnumerator MissesFade () {
-        if (!MissesShown) {
-            Header.text = "MISSES";
-            ScoreText.color = new Color (0, 0, 0, 0);
-            MissesText.color = new Color (0, 0, 0, 1);
-            MissesShown = true;
+    private IEnumerator MissesFade () {
+        if (!missesShown) {
+            header.text = "MISSES";
+            scoreText.color = new Color (0, 0, 0, 0);
+            missesText.color = new Color (0, 0, 0, 1);
+            missesShown = true;
 
             float TimePassed = 0;
 
-            while (TimePassed < Gameplay.TransitionTime) {
+            while (TimePassed < Gameplay.transitionTime) {
                 TimePassed += Time.deltaTime;
-                MissesText.color = new Color(1, 0, 0, TimePassed / Gameplay.TransitionTime);
+                missesText.color = new Color(1, 0, 0, TimePassed / Gameplay.transitionTime);
                 yield return null;
             }
         }
     }
 
-    IEnumerator MissesBlink () {
-        NextMisses = Gameplay.Misses;
-        Vector3 oldPos = new Vector3 (-38.6f * LastMisses, -292, 0);
-        Vector3 newPos = new Vector3 (-38.6f * NextMisses, -292, 0);
-        MissesRect.anchoredPosition = oldPos;
-        int missesDelta = LastMisses - NextMisses;
-        ShownTime = 0;
+    private IEnumerator MissesBlink () {
+        nextMisses = Gameplay.misses;
+        Vector3 oldPos = new Vector3 (-38.6f * previousMisses, -292, 0);
+        Vector3 newPos = new Vector3 (-38.6f * nextMisses, -292, 0);
+        missesRect.anchoredPosition = oldPos;
+        int missesDelta = previousMisses - nextMisses;
+        shownTime = 0;
         for (int i=0; i<3; i++) {
-            MissesText.text = new string('⬡', LastMisses);
-            yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime/10);
-            if (LastMisses > NextMisses) MissesText.text = new string('⬡', LastMisses - missesDelta) + new string('⬢', missesDelta);
-            yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime/10);
+            missesText.text = new string('⬡', previousMisses);
+            yield return new WaitForSecondsRealtime (Gameplay.instance.baseTime/10);
+            if (previousMisses > nextMisses) missesText.text = new string('⬡', previousMisses - missesDelta) + new string('⬢', missesDelta);
+            yield return new WaitForSecondsRealtime (Gameplay.instance.baseTime/10);
         }
-        LastMisses = Gameplay.Misses;
-        MissesText.text = new string('⬡', NextMisses);
+        previousMisses = Gameplay.misses;
+        missesText.text = new string('⬡', nextMisses);
 
         float TimePassed = 0;
-        while (TimePassed < Gameplay.TransitionTime) {
+        while (TimePassed < Gameplay.transitionTime) {
             TimePassed += Time.deltaTime;
-            MissesRect.anchoredPosition = Vector3.Lerp(oldPos, newPos, TimePassed/Gameplay.TransitionTime);
+            missesRect.anchoredPosition = Vector3.Lerp(oldPos, newPos, TimePassed/Gameplay.transitionTime);
             yield return null;
         }
     }
 
-    IEnumerator SmoothMissesChange () {
+    private IEnumerator SmoothMissesChange () {
         yield return MissesFade();
-        yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime / 2);
+        yield return new WaitForSecondsRealtime (Gameplay.instance.baseTime / 2);
         yield return MissesBlink();
         
-        while (ShownTime < Gameplay.instance.BaseTime) {
-            ShownTime += Time.deltaTime;
+        while (shownTime < Gameplay.instance.baseTime) {
+            shownTime += Time.deltaTime;
             yield return null;
         }
 
         float TimePassed = 0;
-        while (TimePassed < Gameplay.TransitionTime) {
+        while (TimePassed < Gameplay.transitionTime) {
             TimePassed += Time.deltaTime;
-            MissesText.color = new Color(1, 0, 0, 1 - (TimePassed / Gameplay.TransitionTime));
+            missesText.color = new Color(1, 0, 0, 1 - (TimePassed / Gameplay.transitionTime));
             yield return null;
         }
         
-        ShownTime = 0;
-        MissesShown = false;
-        ScoreText.color = new Color (0, 0, 0, 1);
-        Header.text = "SCORE";
+        shownTime = 0;
+        missesShown = false;
+        scoreText.color = new Color (0, 0, 0, 1);
+        header.text = "SCORE";
     }
 }

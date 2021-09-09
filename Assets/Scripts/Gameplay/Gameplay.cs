@@ -5,23 +5,23 @@ using UnityEngine;
 public class Gameplay : MonoBehaviour {
 
     public static Gameplay instance;
-    public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset PipelineAsset;
+    public UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset pipelineAsset;
 
-    public static int Score;
-    public static int Misses;
+    public static int score;
+    public static int misses;
 
-    public float BaseTime = 1;
-    public float AdditionalDifficulty = 1.02f;
-    public float HexLiveMult = 2;
-    public int DefaultReward = 5;
+    public float baseTime = 1;
+    public float additionalDifficulty = 1.005f;
+    public float hexLifetimeMult = 2;
+    public int defaultReward = 5;
 
     public Hex[] Hexes;
-    List<int> possibleIndexes = new List<int>();
+    private List<int> possibleIndexes = new List<int>();
 
-    private Coroutine HexesCoroutine;
-    private Coroutine CrystalCoroutine;
+    private Coroutine hexesCoroutine;
+    private Coroutine crystalCoroutine;
 
-    public static float TransitionTime = 0.3f;
+    public static float transitionTime = 0.3f;
 
     void Awake () {
         instance = this;
@@ -33,15 +33,15 @@ public class Gameplay : MonoBehaviour {
 
     public void BeginPlay () {
         if(Screen.dpi > 0) {
-            PipelineAsset.renderScale = Mathf.Clamp(0.5f * 403 / Screen.dpi, 0.25f, 1);
+            pipelineAsset.renderScale = Mathf.Clamp(0.5f * 403 / Screen.dpi, 0.25f, 1);
         } else {
-            PipelineAsset.renderScale = 0.5f;
+            pipelineAsset.renderScale = 0.5f;
         }
         
-        BaseTime = 1;
-        Score = 0;
-        Misses = 5;
-        PlayUI.instance.LastMisses = Misses;
+        baseTime = 1;
+        score = 0;
+        misses = 5;
+        PlayUI.instance.previousMisses = misses;
         PlayUI.instance.UpdateScore();
         ContinuePlay();
     }
@@ -52,59 +52,59 @@ public class Gameplay : MonoBehaviour {
     }
 
     public void ClearField () {
-        StopCoroutine(HexesCoroutine);
-        StopCoroutine(CrystalCoroutine);
+        StopCoroutine(hexesCoroutine);
+        StopCoroutine(crystalCoroutine);
         for (int i=0; i<19; i++) {
             Hexes[i].Hide();
         }
     }
 
     public void ContinuePlay () {
-        HexesCoroutine = StartCoroutine(HexesLoop());
-        CrystalCoroutine = StartCoroutine(CrystalWait());
-        CameraController.CrystalMode = false;
+        hexesCoroutine = StartCoroutine(HexesLoop());
+        crystalCoroutine = StartCoroutine(CrystalWait());
+        CameraController.crystalMode = false;
     }
 
     public void Success (bool Crystal) {
         if (Crystal) {
             //Difficulty += AdditionalDifficulty * 2;
-            BaseTime /= AdditionalDifficulty;
-            Score += DefaultReward * 100;
+            baseTime /= additionalDifficulty;
+            score += defaultReward * 100;
         } else {
             //Difficulty += AdditionalDifficulty;
-            BaseTime /= AdditionalDifficulty;
-            Score += DefaultReward;
+            baseTime /= additionalDifficulty;
+            score += defaultReward;
         }
     
-        TransitionTime = BaseTime / 3;
+        transitionTime = baseTime / 3;
         PlayUI.instance.UpdateScore();
     }
 
     public void Miss (bool Explosion, bool Crystal) {
         if (Crystal) {
-            Misses -= 2;
-            BaseTime /= AdditionalDifficulty;
+            misses -= 2;
+            baseTime /= additionalDifficulty;
         } else {
-            Misses--;
+            misses--;
         }
 
-        if (Misses < 0) {
+        if (misses < 0) {
             EndPlay();
         } else {
             PlayUI.instance.UpdateMisses();
         }  
     }
 
-    IEnumerator CrystalWait () {
-        float waitTime = Random.Range(BaseTime * 30, BaseTime * 60);
+    private IEnumerator CrystalWait () {
+        float waitTime = Random.Range(baseTime * 30, baseTime * 60);
         yield return new WaitForSecondsRealtime (waitTime);
 
         ClearField();
-        CameraController.CrystalMode = true;
+        CameraController.crystalMode = true;
         Crystal.instance.Uprise();
     }
 
-    IEnumerator HexesLoop () {
+    private IEnumerator HexesLoop () {
         while (true) {
             for (int i=0; i<Hexes.Length; i++) {
                 if (!Hexes[i].wasRecentlyUsed) possibleIndexes.Add(i);
@@ -112,11 +112,11 @@ public class Gameplay : MonoBehaviour {
 
             if (possibleIndexes.Count > 0) {
                 int hexIndex = Random.Range(0, possibleIndexes.Count);
-                Hexes[possibleIndexes[hexIndex]].Uprise();
+                Hexes[possibleIndexes[hexIndex]].Raise();
                 possibleIndexes.Clear();
             }
         
-            yield return new WaitForSecondsRealtime (BaseTime);
+            yield return new WaitForSecondsRealtime (baseTime);
         }
     }
 }

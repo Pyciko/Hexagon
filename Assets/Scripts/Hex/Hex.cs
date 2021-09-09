@@ -5,37 +5,37 @@ using UnityEngine.UI;
 
 public class Hex : MonoBehaviour {
     
-    public Image Indicator;
+    public Image indicator;
 
-    public Gradient GradientIndicator;
-    public Color32 DefaultLineColor;
+    public Gradient gradientIndicator;
+    public Color32 defaultLineColor;
 
-    public bool isUprised;
+    public bool isRaised;
     public bool wasRecentlyUsed;
 
-    float TimePlanned;
+    private float timePlanned;
 
-    public GameObject ExplosionPrefab;
+    public GameObject explosionPrefab;
 
-    public void Uprise() {
-        if (!isUprised && !wasRecentlyUsed) {
+    public void Raise() {
+        if (!isRaised && !wasRecentlyUsed) {
             StartCoroutine(ChangeHexState(1));
-            isUprised = true;
+            isRaised = true;
             wasRecentlyUsed = true;
             
-            TimePlanned = Gameplay.instance.BaseTime * Gameplay.instance.HexLiveMult;
+            timePlanned = Gameplay.instance.baseTime * Gameplay.instance.hexLifetimeMult;
             StartCoroutine (HexLife());
         }
     }
 
     IEnumerator HexLife () {
         float TimePassed = 0;
-        while (isUprised) {
+        while (isRaised) {
             TimePassed += Time.deltaTime;
-            Indicator.fillAmount = TimePassed / TimePlanned;
-            Indicator.color = GradientIndicator.Evaluate(TimePassed / TimePlanned);
+            indicator.fillAmount = TimePassed / timePlanned;
+            indicator.color = gradientIndicator.Evaluate(TimePassed / timePlanned);
 
-            if (TimePassed >= TimePlanned) {
+            if (TimePassed >= timePlanned) {
                 Explode();
             }
             yield return null;
@@ -44,7 +44,7 @@ public class Hex : MonoBehaviour {
 
     public void Explode () {
         StartCoroutine(ChangeHexState(0.1f));
-        Instantiate(ExplosionPrefab, transform.localPosition + (Vector3.up / 2), Quaternion.identity);
+        Instantiate(explosionPrefab, transform.localPosition + (Vector3.up / 2), Quaternion.identity);
         Gameplay.instance.Miss(true, false);
     }
 
@@ -59,26 +59,26 @@ public class Hex : MonoBehaviour {
 
     IEnumerator ChangeHexState (float newHeight) {
         if (newHeight != 1)
-            isUprised = false;
+            isRaised = false;
 
         float originalHeight = transform.localScale.y;
-        float originalIndFill = Indicator.fillAmount;
-        Color originalColor = Indicator.color;
-        float TimePassed = 0;
+        float originalIndFill = indicator.fillAmount;
+        Color originalColor = indicator.color;
+        float timePassed = 0;
 
-        while (TimePassed < Gameplay.TransitionTime) {
-            TimePassed += Time.deltaTime;
-            transform.localScale = new Vector3 (1, Mathf.Lerp(originalHeight, newHeight, TimePassed / Gameplay.TransitionTime), 1);
+        while (timePassed < Gameplay.transitionTime) {
+            timePassed += Time.deltaTime;
+            transform.localScale = new Vector3 (1, Mathf.Lerp(originalHeight, newHeight, timePassed / Gameplay.transitionTime), 1);
             if (newHeight != 1) {
-                Indicator.fillAmount = Mathf.Lerp(originalIndFill, 1, TimePassed / Gameplay.TransitionTime);
-                Indicator.color = Color.Lerp(originalColor, DefaultLineColor, TimePassed / Gameplay.TransitionTime);
+                indicator.fillAmount = Mathf.Lerp(originalIndFill, 1, timePassed / Gameplay.transitionTime);
+                indicator.color = Color.Lerp(originalColor, defaultLineColor, timePassed / Gameplay.transitionTime);
             }
 
             yield return null;
         }
 
         if (newHeight != 1) {
-            yield return new WaitForSecondsRealtime (Gameplay.instance.BaseTime);
+            yield return new WaitForSecondsRealtime (Gameplay.instance.baseTime);
             wasRecentlyUsed = false;
         }
     }
